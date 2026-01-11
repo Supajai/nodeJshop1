@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProKicks Admin | Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .font-anton {
+            font-family: 'Anton', sans-serif;
+            letter-spacing: 0.05em;
+        }
+
+        .sidebar-link.active {
+            background-color: #333a48;
+            color: white;
+        }
+
+        .hide-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Modal Transitions (No JS Loop) */
+        .modal {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal .modal-content {
+            transform: scale(0.95);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100/50 text-slate-900 flex h-screen overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside class="w-72 bg-[#1c2434] text-gray-400 flex flex-col transition-all duration-300 transform hidden lg:flex">
+        <!-- Logo -->
+        <div class="h-20 flex items-center px-8 border-b border-gray-700/50">
+            <a href="index.html" class="text-2xl font-anton italic text-white tracking-wider flex items-center gap-2">
+                <span class="bg-red-600 w-8 h-8 flex items-center justify-center rounded text-sm not-italic">P</span>
+                PROKICKS
+            </a>
+        </div>
+
+        <div class="flex-1 overflow-y-auto py-6 px-4 space-y-1">
+            <p class="px-4 text-xs font-semibold tracking-widest uppercase text-gray-500 mb-4">Menu</p>
+
+            <button onclick="switchTab('dashboard')" id="nav-dashboard"
+                class="sidebar-link w-full flex items-center gap-3 px-4 py-3 rounded hover:bg-[#333a48] hover:text-white transition group active">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z">
+                    </path>
+                </svg>
+                <span class="font-medium">Dashboard</span>
+            </button>
+
+            <button onclick="switchTab('products')" id="nav-products"
+                class="sidebar-link w-full flex items-center gap-3 px-4 py-3 rounded hover:bg-[#333a48] hover:text-white transition group">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                </svg>
+                <span class="font-medium">Products</span>
+            </button>
+
+            <button onclick="switchTab('orders')" id="nav-orders"
+                class="sidebar-link w-full flex items-center gap-3 px-4 py-3 rounded hover:bg-[#333a48] hover:text-white transition group">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
+                    </path>
+                </svg>
+                <span class="font-medium">Orders</span>
+            </button>
+        </div>
+
+        <div class="p-4 border-t border-gray-700/50 space-y-2">
+            <a href="index.html"
+                class="w-full flex items-center gap-3 px-4 py-3 rounded text-gray-400 hover:bg-[#333a48] hover:text-white transition group">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                    </path>
+                </svg>
+                <span class="font-medium">Back to Home</span>
+            </a>
+            <button onclick="logout()"
+                class="w-full flex items-center gap-3 px-4 py-3 rounded text-red-400 hover:bg-red-500/10 transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1">
+                    </path>
+                </svg>
+                <span class="font-medium">Logout</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden">
+
+        <!-- Header -->
+        <header class="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-8 shadow-sm z-20">
+            <div class="flex items-center gap-4">
+                <button class="lg:hidden p-2 text-gray-500 hover:text-black">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="flex items-center gap-6">
+                <div class="flex items-center gap-3">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-sm font-bold text-black" id="admin-name">Auth Admin</p>
+                        <p class="text-xs text-gray-500">Administrator</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-gray-200 overflow-hidden border border-gray-200">
+                        <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff"
+                            class="w-full h-full object-cover">
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Scrollable Content -->
+        <div class="flex-1 overflow-y-auto p-4 md:p-8 bg-gray-50 hide-scroll">
+
+            <!-- VIEW: DASHBOARD -->
+            <div id="view-dashboard" class="space-y-8 fade-in">
+                <!-- Stats Grid -->
+                <!-- Stats Grid (Simplified: Orders, Products, Users) -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Total Orders -->
+                    <div
+                        class="bg-white p-6 rounded-lg border border-gray-100/50 shadow-sm hover:shadow-md transition-all duration-300">
+                        <div
+                            class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 mb-4">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-3xl font-bold font-anton text-slate-800" id="stat-orders">...</h3>
+                            <span class="text-xs text-gray-400 font-medium uppercase tracking-wider">Total Orders</span>
+                        </div>
+                    </div>
+
+                    <!-- Total Products -->
+                    <div
+                        class="bg-white p-6 rounded-lg border border-gray-100/50 shadow-sm hover:shadow-md transition-all duration-300">
+                        <div
+                            class="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center text-purple-600 mb-4">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-3xl font-bold font-anton text-slate-800" id="stat-products">...</h3>
+                            <span class="text-xs text-gray-400 font-medium uppercase tracking-wider">Total
+                                Products</span>
+                        </div>
+                    </div>
+
+                    <!-- Total Users -->
+                    <div
+                        class="bg-white p-6 rounded-lg border border-gray-100/50 shadow-sm hover:shadow-md transition-all duration-300">
+                        <div
+                            class="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center text-orange-600 mb-4">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-3xl font-bold font-anton text-slate-800" id="stat-users">...</h3>
+                            <span class="text-xs text-gray-400 font-medium uppercase tracking-wider">Total Users</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: PRODUCTS -->
+            <div id="view-products" class="hidden space-y-6 fade-in">
+                <div class="flex justify-between items-center bg-white p-4 rounded border border-gray-100 shadow-sm">
+                    <h2 class="text-xl font-bold text-black">Product Management</h2>
+                    <button onclick="document.getElementById('add-product-modal').classList.add('active')"
+                        class="bg-black text-white px-6 py-2 rounded font-bold uppercase text-xs hover:bg-gray-800 transition shadow-lg">+
+                        Add Product</button>
+                </div>
+                <div class="bg-white rounded-sm border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left whitespace-nowrap">
+                            <thead class="bg-gray-50 border-b border-gray-100">
+                                <tr>
+                                    <th class="p-4 text-xs font-bold uppercase text-gray-500">Product</th>
+                                    <th class="p-4 text-xs font-bold uppercase text-gray-500">Category</th>
+                                    <th class="p-4 text-xs font-bold uppercase text-gray-500">Price</th>
+                                    <th class="p-4 text-xs font-bold uppercase text-gray-500">Stock</th>
+                                    <th class="p-4 text-xs font-bold uppercase text-gray-500">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="product-list" class="divide-y divide-gray-100 text-sm"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: ORDERS -->
+            <div id="view-orders" class="hidden space-y-6 fade-in">
+                <div class="bg-white p-4 rounded border border-gray-100 shadow-sm">
+                    <h2 class="text-xl font-bold text-black">Order Management</h2>
+                </div>
+                <div class="bg-white rounded-sm border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="p-6 border-b border-gray-100 flex justify-between">
+                        <h3 class="font-bold text-black">Recent Orders</h3><button onclick="loadOrders()"
+                            class="text-blue-500 text-xs font-bold hover:underline">Refresh Data</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left whitespace-nowrap">
+                            <thead class="bg-gray-50 border-b border-gray-100">
+                                <tr>
+                                    <th class="p-4 text-xs font-bold uppercase text-gray-500">Order ID</th>
+                                    <th class="p-4 text-xs font-bold uppercase text-gray-500">Customer</th>
+                                    <th class="p-4 text-xs font-bold uppercase text-gray-500">Total</th>
+                                    <th class="p-4 text-xs font-bold uppercase text-gray-500">Status</th>
+                                    <th class="p-4 text-xs font-bold uppercase text-gray-500">Slip</th>
+                                    <th class="p-4 text-xs font-bold uppercase text-gray-500">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="order-list" class="divide-y divide-gray-100 text-sm"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- MODAL: ADD PRODUCT -->
+    <div id="add-product-modal"
+        class="modal fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+        <div class="modal-content bg-white w-full max-w-lg rounded-xl shadow-2xl p-8 max-h-[90vh] overflow-y-auto">
+            <h3 class="font-black text-2xl uppercase mb-6 italic">New Product</h3>
+            <form id="add-product-form" class="space-y-4">
+                <input name="name"
+                    class="w-full border-b-2 border-gray-200 p-3 outline-none focus:border-black font-bold transition"
+                    placeholder="Product Name" required>
+                <div class="grid grid-cols-2 gap-4">
+                    <input name="brand"
+                        class="border-b-2 border-gray-200 p-3 outline-none focus:border-black transition"
+                        placeholder="Brand">
+                    <input name="price" type="number"
+                        class="border-b-2 border-gray-200 p-3 outline-none focus:border-black transition font-bold"
+                        placeholder="Price (THB)" required>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <select name="category"
+                        class="w-full border-b-2 border-gray-200 p-3 outline-none focus:border-black bg-transparent">
+                        <option value="football">Football</option>
+                        <option value="futsal">Futsal</option>
+                        <option value="running">Running</option>
+                        <option value="basketball">Basketball</option>
+                        <option value="sneaker">Sneaker</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <select name="stock"
+                        class="w-full border-b-2 border-gray-200 p-3 outline-none focus:border-black bg-transparent">
+                        <option value="true">In Stock</option>
+                        <option value="false">Out of Stock</option>
+                    </select>
+                </div>
+                <input name="sizes"
+                    class="w-full border-b-2 border-gray-200 p-3 outline-none focus:border-black transition"
+                    placeholder="Sizes (e.g. 38, 39, 40)">
+                <textarea name="description"
+                    class="w-full border-2 border-gray-200 p-3 rounded-lg outline-none focus:border-black transition h-24 resize-none"
+                    placeholder="Product Description"></textarea>
+                <label
+                    class="block w-full border-2 border-dashed border-gray-300 p-8 text-center rounded-lg cursor-pointer hover:bg-gray-50 transition group">
+                    <div class="text-gray-400 group-hover:text-black font-medium">Click to Upload Images</div>
+                    <input id="p-img-file" type="file" multiple accept="image/*" class="hidden">
+                </label>
+                <div id="image-preview" class="flex gap-2 overflow-x-auto p-1 h-16"></div>
+                <div class="flex gap-3 pt-4">
+                    <button type="button"
+                        onclick="document.getElementById('add-product-modal').classList.remove('active')"
+                        class="flex-1 bg-gray-100 text-black py-3 rounded-lg font-bold uppercase text-xs hover:bg-gray-200 transition">Cancel</button>
+                    <button type="submit"
+                        class="flex-1 bg-black text-white py-3 rounded-lg font-bold uppercase text-xs hover:bg-gray-800 transition shadow-lg">Create
+                        Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: EDIT PRODUCT -->
+    <div id="edit-modal" class="modal fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+        <div class="modal-content bg-white w-full max-w-lg rounded-xl shadow-2xl p-8 max-h-[90vh] overflow-y-auto">
+            <h3 class="font-black text-2xl uppercase mb-6 italic">Edit Product</h3>
+            <form id="edit-product-form" class="space-y-4">
+                <input type="hidden" id="edit-id">
+                <input id="edit-name"
+                    class="w-full border-b-2 border-gray-200 p-3 outline-none focus:border-black font-bold"
+                    placeholder="Name" required>
+                <div class="grid grid-cols-2 gap-4">
+                    <input id="edit-brand" class="border-b-2 border-gray-200 p-3 outline-none focus:border-black"
+                        placeholder="Brand">
+                    <input id="edit-price" type="number"
+                        class="border-b-2 border-gray-200 p-3 outline-none focus:border-black font-bold"
+                        placeholder="Price" required>
+                </div>
+                <select id="edit-category" class="w-full border-b-2 border-gray-200 p-3 outline-none bg-transparent">
+                    <option value="football">Football</option>
+                    <option value="futsal">Futsal</option>
+                    <option value="running">Running</option>
+                    <option value="basketball">Basketball</option>
+                    <option value="sneaker">Sneaker</option>
+                    <option value="other">Other</option>
+                </select>
+                <input id="edit-sizes" class="w-full border-b-2 border-gray-200 p-3 outline-none" placeholder="Sizes">
+                <textarea id="edit-description" class="w-full border-2 border-gray-200 p-3 rounded h-24"
+                    placeholder="Description"></textarea>
+                <input id="edit-img-file" type="file" multiple class="text-xs">
+                <select id="edit-stock" class="w-full border p-2 rounded">
+                    <option value="true">In Stock</option>
+                    <option value="false">Out of Stock</option>
+                </select>
+                <div class="flex gap-3 pt-4">
+                    <button type="button" onclick="document.getElementById('edit-modal').classList.remove('active')"
+                        class="flex-1 bg-gray-100 font-bold uppercase text-xs rounded py-3">Cancel</button>
+                    <button type="submit"
+                        class="flex-1 bg-black text-white font-bold uppercase text-xs rounded py-3">Save
+                        Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/admin.js"></script>
+    <script>
+        // Charts removed as per request
+        /*
+        const commonOptions = { ... };
+        new ApexCharts(...).render();
+        */
+
+        function switchTab(tab) {
+            ['dashboard', 'products', 'orders'].forEach(t => {
+                document.getElementById('view-' + t).classList.add('hidden');
+                document.getElementById('nav-' + t).classList.remove('active', 'bg-[#333a48]', 'text-white');
+            });
+            document.getElementById('view-' + tab).classList.remove('hidden');
+            document.getElementById('nav-' + tab).classList.add('active', 'bg-[#333a48]', 'text-white');
+        }
+    </script>
+</body>
+
+</html>
