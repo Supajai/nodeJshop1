@@ -26,6 +26,8 @@ app.use('/api/admin', require('./routes/adminRoutes')); // New Admin Route
 console.log('[Server] All routes registered');
 
 
+
+
 // API 404 Handler (Must be before the generic catch-all)
 app.use('/api', (req, res) => {
     res.status(404).json({ error: 'API Route not found' });

@@ -153,58 +153,101 @@
             <div id="view-dashboard" class="space-y-8 fade-in">
                 <!-- Stats Grid -->
                 <!-- Stats Grid (Simplified: Orders, Products, Users) -->
+                <!-- Enhanced Stats Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <!-- Total Orders -->
+                    <!-- Total Orders (Gradient: Blue) -->
                     <div
-                        class="bg-white p-6 rounded-lg border border-gray-100/50 shadow-sm hover:shadow-md transition-all duration-300">
+                        class="relative overflow-hidden bg-gradient-to-br from-blue-500 to-blue-700 p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 text-white group">
                         <div
-                            class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 mb-4">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
-                                </path>
-                            </svg>
+                            class="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all">
                         </div>
-                        <div>
-                            <h3 class="text-3xl font-bold font-anton text-slate-800" id="stat-orders">...</h3>
-                            <span class="text-xs text-gray-400 font-medium uppercase tracking-wider">Total Orders</span>
+                        <div class="flex justify-between items-start relative z-10">
+                            <div>
+                                <p class="text-blue-100 text-xs font-bold uppercase tracking-widest mb-1">Total Orders
+                                </p>
+                                <h3 class="text-4xl font-black font-anton tracking-wide" id="stat-orders">...</h3>
+                            </div>
+                            <div class="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                                </svg>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Total Products -->
+                    <!-- Total Products (Gradient: Purple) -->
                     <div
-                        class="bg-white p-6 rounded-lg border border-gray-100/50 shadow-sm hover:shadow-md transition-all duration-300">
+                        class="relative overflow-hidden bg-gradient-to-br from-purple-500 to-purple-700 p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 text-white group">
                         <div
-                            class="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center text-purple-600 mb-4">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
-                            </svg>
+                            class="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all">
                         </div>
-                        <div>
-                            <h3 class="text-3xl font-bold font-anton text-slate-800" id="stat-products">...</h3>
-                            <span class="text-xs text-gray-400 font-medium uppercase tracking-wider">Total
-                                Products</span>
+                        <div class="flex justify-between items-start relative z-10">
+                            <div>
+                                <p class="text-purple-100 text-xs font-bold uppercase tracking-widest mb-1">Total
+                                    Products</p>
+                                <h3 class="text-4xl font-black font-anton tracking-wide" id="stat-products">...</h3>
+                            </div>
+                            <div class="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                                </svg>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Total Users -->
+                    <!-- Total Users (Gradient: Orange) -->
                     <div
-                        class="bg-white p-6 rounded-lg border border-gray-100/50 shadow-sm hover:shadow-md transition-all duration-300">
+                        class="relative overflow-hidden bg-gradient-to-br from-orange-500 to-red-600 p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 text-white group">
                         <div
-                            class="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center text-orange-600 mb-4">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
-                                </path>
-                            </svg>
+                            class="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all">
                         </div>
-                        <div>
-                            <h3 class="text-3xl font-bold font-anton text-slate-800" id="stat-users">...</h3>
-                            <span class="text-xs text-gray-400 font-medium uppercase tracking-wider">Total Users</span>
+                        <div class="flex justify-between items-start relative z-10">
+                            <div>
+                                <p class="text-orange-100 text-xs font-bold uppercase tracking-widest mb-1">Total Users
+                                </p>
+                                <h3 class="text-4xl font-black font-anton tracking-wide" id="stat-users">...</h3>
+                            </div>
+                            <div class="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                                    </path>
+                                </svg>
+                            </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Recent Orders Section -->
+                <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+                    <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+                        <h3 class="font-bold text-gray-800 flex items-center gap-2">
+                            <span class="w-2 h-6 bg-black rounded-full"></span>
+                            Recent Orders
+                        </h3>
+                        <button onclick="switchTab('orders')"
+                            class="text-xs font-bold uppercase tracking-wider text-blue-600 hover:text-blue-800 transition">View
+                            All</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left whitespace-nowrap">
+                            <thead class="bg-gray-50/50">
+                                <tr>
+                                    <th class="p-4 text-[10px] font-bold uppercase text-gray-400">Order ID</th>
+                                    <th class="p-4 text-[10px] font-bold uppercase text-gray-400">Customer</th>
+                                    <th class="p-4 text-[10px] font-bold uppercase text-gray-400">Amount</th>
+                                    <th class="p-4 text-[10px] font-bold uppercase text-gray-400">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashboard-recent-orders" class="divide-y divide-gray-100 text-sm">
+                                <tr>
+                                    <td colspan="4" class="p-8 text-center text-gray-400 text-xs">Loading recent
+                                        activity...</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

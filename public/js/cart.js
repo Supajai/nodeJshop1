@@ -3,13 +3,51 @@
 document.addEventListener('DOMContentLoaded', () => {
     checkAuthUI();
     renderCart();
-    
+
     // ตรวจสอบว่าหน้าเว็บมีฟอร์ม order-form หรือไม่
     const orderForm = document.getElementById('order-form');
-    if(orderForm) {
+    if (orderForm) {
         orderForm.addEventListener('submit', submitOrder);
     }
 });
+
+
+
+function addToCart(product, size = null) {
+    // Check stock
+    if (!product.inStock) {
+        showToast('This product is out of stock', 'error');
+        return;
+    }
+
+    // Check size if available
+    if (product.sizes && product.sizes.length > 0 && !size) {
+        showToast('Please select a size', 'error');
+        return;
+    }
+
+    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+    // Check if same product + same size exists
+    const existingItem = cart.find(i => i._id === product._id && i.size === size);
+
+    if (existingItem) {
+        existingItem.qty += 1;
+    } else {
+        cart.push({
+            _id: product._id,
+            name: product.name,
+            price: product.price,
+            image: (product.images && product.images.length > 0) ? product.images[0] : product.image,
+            size: size,
+            qty: 1
+        });
+    }
+
+    localStorage.setItem('cart', JSON.stringify(cart));
+    checkAuthUI(); // Update badge
+    showToast('Added to bag successfully', 'success');
+}
 
 function renderCart() {
     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
@@ -19,7 +57,7 @@ function renderCart() {
     const countEl = document.getElementById('item-count');
     const btn = document.querySelector('button[type="submit"]');
 
-    if (!container) return; 
+    if (!container) return;
 
     if (cart.length === 0) {
         container.innerHTML = `
@@ -27,10 +65,10 @@ function renderCart() {
                 <p class="text-sm font-bold uppercase tracking-widest text-gray-400">Bag is Empty</p>
                 <a href="index.html" class="mt-4 text-xs font-bold text-black border-b border-black pb-0.5 hover:text-red-600 transition">Go Shopping</a>
             </div>`;
-        if(totalEl) totalEl.innerText = '฿0';
-        if(subtotalEl) subtotalEl.innerText = '฿0';
-        if(countEl) countEl.innerText = '0 items';
-        if(btn) { btn.disabled = true; btn.classList.add('opacity-50', 'cursor-not-allowed'); }
+        if (totalEl) totalEl.innerText = '฿0';
+        if (subtotalEl) subtotalEl.innerText = '฿0';
+        if (countEl) countEl.innerText = '0 items';
+        if (btn) { btn.disabled = true; btn.classList.add('opacity-50', 'cursor-not-allowed'); }
         return;
     }
 
@@ -55,10 +93,10 @@ function renderCart() {
         </div>`;
     }).join('');
 
-    if(totalEl) totalEl.innerText = money(total);
-    if(subtotalEl) subtotalEl.innerText = money(total);
-    if(countEl) countEl.innerText = `${cart.length} ITEMS`;
-    if(btn) { btn.disabled = false; btn.classList.remove('opacity-50', 'cursor-not-allowed'); }
+    if (totalEl) totalEl.innerText = money(total);
+    if (subtotalEl) subtotalEl.innerText = money(total);
+    if (countEl) countEl.innerText = `${cart.length} ITEMS`;
+    if (btn) { btn.disabled = false; btn.classList.remove('opacity-50', 'cursor-not-allowed'); }
 }
 
 function removeFromCart(index) {
@@ -71,10 +109,10 @@ function removeFromCart(index) {
 
 async function submitOrder(e) {
     e.preventDefault();
-    
+
     // เช็ค Login
     const token = localStorage.getItem('token');
-    if(!token) {
+    if (!token) {
         showAlert('Login Required', 'Please login to place an order.', 'error', () => {
             window.location.href = 'login.html';
         });
@@ -84,13 +122,13 @@ async function submitOrder(e) {
     const form = e.target;
     const btn = form.querySelector('button[type="submit"]');
     const originalText = btn.innerText;
-    
+
     // ล็อกปุ่มกันกดซ้ำ
-    btn.innerText = 'Processing...'; 
+    btn.innerText = 'Processing...';
     btn.disabled = true;
 
     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    if(cart.length === 0) {
+    if (cart.length === 0) {
         showAlert('Cart Empty', 'Please add items first.', 'error');
         btn.innerText = originalText;
         btn.disabled = false;
@@ -126,13 +164,13 @@ async function submitOrder(e) {
         const res = await fetch(`${API_URL}/orders`, {
             method: 'POST',
             // ✅ สำคัญ: ส่ง true เพื่อบอกว่าไม่ต้องใส่ application/json
-            headers: getHeaders(true), 
+            headers: getHeaders(true),
             body: formData
         });
 
         const data = await res.json();
 
-        if(res.ok) {
+        if (res.ok) {
             localStorage.removeItem('cart');
             showAlert('Order Placed!', 'Thank you for shopping with us.', 'success', () => {
                 window.location.href = 'index.html';
@@ -142,7 +180,7 @@ async function submitOrder(e) {
             btn.innerText = originalText;
             btn.disabled = false;
         }
-    } catch(err) {
+    } catch (err) {
         console.error(err);
         showAlert('Network Error', 'Cannot connect to server.', 'error');
         btn.innerText = originalText;

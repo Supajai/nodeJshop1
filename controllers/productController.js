@@ -19,7 +19,7 @@ exports.getAllProducts = async (req, res) => {
             // ใช้ RegExp เพื่อให้หาเจอแม้ตัวพิมพ์เล็กใหญ่ต่างกัน
             query.brand = { $in: brands.map(b => new RegExp(`^${b}$`, 'i')) };
         }
-        
+
         // 3. กรองราคา
         if (minPrice || maxPrice) {
             query.price = {};
@@ -31,7 +31,7 @@ exports.getAllProducts = async (req, res) => {
         if (search) {
             // ตัดช่องว่างหน้าหลัง และแปลง special characters เพื่อป้องกัน error
             const cleanSearch = search.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            
+
             // สร้าง Regex แบบ 'i' (Case Insensitive - ไม่สนตัวพิมพ์เล็กใหญ่)
             const searchRegex = new RegExp(cleanSearch, 'i');
 
@@ -69,26 +69,49 @@ exports.getAllProducts = async (req, res) => {
     }
 };
 
+exports.addReview = async (req, res) => {
+    try {
+        const { user, rating, comment } = req.body;
+        const product = await Product.findById(req.params.id);
+
+        if (!product) return res.status(404).json({ error: 'Product not found' });
+
+        const newReview = {
+            user,
+            rating: Number(rating),
+            comment,
+            date: new Date()
+        };
+
+        product.reviews.push(newReview);
+        await product.save();
+
+        res.status(201).json({ message: 'Review added', reviews: product.reviews });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
 // ... (ส่วน createProduct, updateProduct, deleteProduct เหมือนเดิม ไม่ต้องแก้) ...
 // เพื่อความชัวร์ ก๊อปปี้ส่วนล่างนี้ไปวางต่อได้เลยครับ
 
 exports.createProduct = async (req, res) => {
     try {
         const { name, brand, price, description, stock, sizes, category } = req.body;
-        
+
         let imagePaths = [];
         if (req.files && req.files.length > 0) {
             imagePaths = req.files.map(file => '/uploads/' + file.filename);
         }
-        
+
         const isStockAvailable = String(stock) === 'true';
 
         const product = new Product({
-            name, 
+            name,
             brand: brand || 'No Brand',
-            price: Number(price), 
-            description, 
-            category: category || 'other', 
+            price: Number(price),
+            description,
+            category: category || 'other',
             inStock: isStockAvailable,
             sizes: sizes ? sizes.split(',').map(s => s.trim()) : [],
             images: imagePaths
@@ -104,10 +127,10 @@ exports.updateProduct = async (req, res) => {
         const { name, brand, price, description, stock, sizes, category } = req.body;
         const isStockAvailable = String(stock) === 'true';
 
-        let updateData = { 
-            name, brand, price: Number(price), description, category, inStock: isStockAvailable 
+        let updateData = {
+            name, brand, price: Number(price), description, category, inStock: isStockAvailable
         };
-        
+
         if (sizes) updateData.sizes = sizes.split(',').map(s => s.trim());
         if (req.files && req.files.length > 0) {
             updateData.images = req.files.map(file => '/uploads/' + file.filename);
@@ -124,7 +147,7 @@ exports.deleteProduct = async (req, res) => {
         if (product && product.images) {
             product.images.forEach(img => {
                 const p = path.join(__dirname, '../public', img);
-                if(fs.existsSync(p)) fs.unlinkSync(p);
+                if (fs.existsSync(p)) fs.unlinkSync(p);
             });
         }
         res.json({ message: 'Deleted successfully' });

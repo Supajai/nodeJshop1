@@ -21,7 +21,7 @@ exports.createOrder = async (req, res) => {
         }
 
         const newOrder = new Order({
-            userId: req.user ? req.user.userId : null, // ถ้าไม่ได้ล็อกอินก็เป็น null
+            userId: req.user ? req.user._id : null, // Fix: Token uses _id
             customerName,
             tel,
             address,
@@ -65,7 +65,7 @@ exports.updateOrderStatus = async (req, res) => {
 // ดึงออเดอร์ของ User คนนั้นๆ
 exports.getUserOrders = async (req, res) => {
     try {
-        const orders = await Order.find({ userId: req.user.userId }).sort({ createdAt: -1 });
+        const orders = await Order.find({ userId: req.user._id }).sort({ createdAt: -1 });
         res.json(orders);
     } catch (err) {
         res.status(500).json({ error: err.message });
